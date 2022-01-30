@@ -4,7 +4,10 @@ import shutil
 
 BASE_FILE_PATH = "/<google-drive-download-dir>"
 OUTPUT_DIR_PATH = BASE_FILE_PATH + "/output"
-
+##
+# BASE_FILE_PATH : 分割されたディレクトリの親ディレクトリを指定  ;e.g. /downloads/dir/dir 1  /dir/dir 2 であれば /downloads/dir
+# OUTPUT_DIR_PATH: 特に指定なし
+##
 
 class Entry:
     file_name: str
@@ -118,5 +121,3 @@ if __name__ == '__main__':
         print("[WARN]\t" + OUTPUT_DIR_PATH + " is already exists.")
 
     dig_dir(subject_dir)
-
-    # copy_file("/Users/yuzukichi/Desktop/javab_scoring.md", "/Users/yuzukichi/Desktop/dir/file.txt")
