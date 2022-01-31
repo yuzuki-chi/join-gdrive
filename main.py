@@ -3,8 +3,15 @@ import re
 import shutil
 
 BASE_FILE_PATH = "/<google-drive-download-dir>"
+TARGET_DIR_NAME = "<dir name>"
 OUTPUT_DIR_PATH = BASE_FILE_PATH + "/output"
 
+
+##
+# BASE_FILE_PATH : 分割されたディレクトリの親ディレクトリを指定  ;e.g. /downloads/input/dir 1  /input/dir 2 であれば /downloads/input
+# TARGET_DIR_NAME: 分割されたディレクトリ名                   ;e.g. /download/input/dir 1 /dir/dir 2 であれば dir
+# OUTPUT_DIR_PATH: 特に指定なし
+##
 
 class Entry:
     file_name: str
@@ -21,12 +28,12 @@ class Entry:
             self.file_hierarchy[0] = "/"
 
         self.file_path = self.file_full_path.replace(BASE_FILE_PATH, "")
-        if self.file_path == "":
+        if self.file_path == "":  # root dir
             self.file_path = "/"
 
         # print(self.file_full_path + " => " + self.file_path)
 
-        if self.file_path.count("/") == 1:  # 最上階ディレクトリのもの（無視）
+        if self.file_path.count("/") == 1:  # TODO: 分割に含まれずそのままダウンロードされたファイルは対象外となっている.
             # print("[parent]" + self.file_path)
             pass
         else:  # 対象となる子ディレクトリ
@@ -58,11 +65,9 @@ def get_file_type(file_path: str = "") -> int:
 def dig_dir(entry: Entry):
     for target in entry:
         file_type = get_file_type(target.get_file_full_path())
-        # TODO: dirの時は再起的にディレクトリを作成し, fileの時はファイルデータをコピーする
+
         # dir
         if file_type == 2:
-            # print(target.get_file_path() + " is dir!")
-            # output_dirname = target.get_file_path()
             entry = []
             for e in os.listdir(path=target.get_file_full_path()):
                 entry.append(Entry(target.get_file_full_path() + "/" + e))
@@ -70,19 +75,11 @@ def dig_dir(entry: Entry):
 
         # file
         elif file_type == 1:
-            # print(target.get_file_hierarchy())
-            # print(target.get_file_full_path() + " is file")
-            # print("filename is " + target.get_file_name())
-            # print("これを " + OUTPUT_DIR_PATH + "へ移動させる")
-            # print("これを " + OUTPUT_DIR_PATH + "/" + target.get_file_path() + "へ移動させる")
             pass
-            #
-            # target.get_file_full_path() -> OUTPUT_DIR_PATH + "/" + target.get_file_path()
-            #
-            # 実際にコピーしている関数呼び出し
-            print(target.get_file_full_path() + " -> " + OUTPUT_DIR_PATH + "/" + target.get_file_path())
+            # print(target.get_file_full_path() + " -> " + OUTPUT_DIR_PATH + "/" + target.get_file_path())
             copy_file(target.get_file_full_path(), OUTPUT_DIR_PATH + "/" + target.get_file_path())
 
+        # other file
         else:
             print("[ERR]\t" + target.get_file_full_path() + " is not file")
 
@@ -98,25 +95,26 @@ def copy_file(source: str, target: str):
 
 if __name__ == '__main__':
 
+    # Parent Entry
     file = Entry(BASE_FILE_PATH)
 
+    # Create Entry list -------------------------------------------
     entry = []
     for e in os.listdir(path=BASE_FILE_PATH):
         entry.append(Entry(BASE_FILE_PATH + "/" + e))
 
-    # JOINするNOT_SYNCをリストアップ
+    # Create subject dir ------------------------------------------
     subject_dir = []
     for e in entry:
-        if "NOT_SYNC" in e.get_file_name():
+        if TARGET_DIR_NAME in e.get_file_name():
             subject_dir.append(e)
-            # print(subject_dir[-1].get_file_path())
 
-    # output/NOT_SYNC/ の作成
+    # Create output dir -------------------------------------------
     if not os.path.exists(OUTPUT_DIR_PATH):
         os.makedirs(OUTPUT_DIR_PATH)
     else:
         print("[WARN]\t" + OUTPUT_DIR_PATH + " is already exists.")
 
+    # Start dig
+    print("Join file ...")
     dig_dir(subject_dir)
-
-    # copy_file("/Users/yuzukichi/Desktop/javab_scoring.md", "/Users/yuzukichi/Desktop/dir/file.txt")
