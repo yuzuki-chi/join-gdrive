@@ -52,12 +52,13 @@
 
 ## 使い方
 
-`main.py` の再序盤にある `BASE_FILE_PATH` で対象となるディレクトリを指定する。 `OUTPUT_DIR_PATH` で出力先を指定する。
+`main.py` の再序盤にある `BASE_FILE_PATH` で対象となるディレクトリを指定する。分割されたディレクトリのオリジナル名を`TARGET_DIR_NAME`に指定する。 `OUTPUT_DIR_PATH` で出力先を指定する。
 
 背景にある例で表すと、次のようになる。
 この時、連結したいディレクトリをあらかじめひとつのディレクトリにまとめておく。つまり、`big_dir*` ディレクトリは全て `input`ディレクトリに格納している。
 ```python
 BASE_FILE_PATH = "./input"
+TARGET_DIR_NAME = "big_dir"
 OUTPUT_DIR_PATH = BASE_FILE_PATH + "./output"
 ```
 

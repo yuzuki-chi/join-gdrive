@@ -3,11 +3,13 @@ import re
 import shutil
 
 BASE_FILE_PATH = "/<google-drive-download-dir>"
+TARGET_DIR_NAME = "<dir name>"
 OUTPUT_DIR_PATH = BASE_FILE_PATH + "/output"
 
 
 ##
-# BASE_FILE_PATH : 分割されたディレクトリの親ディレクトリを指定  ;e.g. /downloads/dir/dir 1  /dir/dir 2 であれば /downloads/dir
+# BASE_FILE_PATH : 分割されたディレクトリの親ディレクトリを指定  ;e.g. /downloads/input/dir 1  /input/dir 2 であれば /downloads/input
+# TARGET_DIR_NAME: 分割されたディレクトリ名                   ;e.g. /download/input/dir 1 /dir/dir 2 であれば dir
 # OUTPUT_DIR_PATH: 特に指定なし
 ##
 
@@ -109,17 +111,16 @@ if __name__ == '__main__':
     for e in os.listdir(path=BASE_FILE_PATH):
         entry.append(Entry(BASE_FILE_PATH + "/" + e))
 
-    # JOINするNOT_SYNCをリストアップ
     subject_dir = []
     for e in entry:
-        if "NOT_SYNC" in e.get_file_name():
+        if TARGET_DIR_NAME in e.get_file_name():
             subject_dir.append(e)
-            # print(subject_dir[-1].get_file_path())
 
-    # output/NOT_SYNC/ の作成
+    # Create output dir -------------------------------------------
     if not os.path.exists(OUTPUT_DIR_PATH):
         os.makedirs(OUTPUT_DIR_PATH)
     else:
         print("[WARN]\t" + OUTPUT_DIR_PATH + " is already exists.")
+    # -------------------------------------------------------------
 
     dig_dir(subject_dir)
