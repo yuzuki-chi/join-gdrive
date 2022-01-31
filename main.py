@@ -4,6 +4,8 @@ import shutil
 
 BASE_FILE_PATH = "/<google-drive-download-dir>"
 OUTPUT_DIR_PATH = BASE_FILE_PATH + "/output"
+
+
 ##
 # BASE_FILE_PATH : 分割されたディレクトリの親ディレクトリを指定  ;e.g. /downloads/dir/dir 1  /dir/dir 2 であれば /downloads/dir
 # OUTPUT_DIR_PATH: 特に指定なし
